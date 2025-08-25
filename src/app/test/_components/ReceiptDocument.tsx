@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, Font } from '@react-pdf/renderer';
+"use client"
+
+import React, { useState, useEffect } from 'react';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import dynamic from 'next/dynamic';
 
 // Type definitions
 interface CompanyInfo {
@@ -312,6 +315,48 @@ const ReceiptPreview: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
   </div>
 );
 
+// Dynamically import PDFDownloadLink to avoid SSR issues
+const PDFDownloadLink = dynamic(
+  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+  {
+    ssr: false,
+    loading: () => <p>Loading PDF generator...</p>
+  }
+);
+
+// Client-side PDF Download Component
+const PDFDownloadButton: React.FC<{ receiptData: ReceiptData }> = ({ receiptData }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="text-center">
+        <div className="inline-block px-6 py-3 bg-gray-400 text-white font-medium rounded-lg cursor-not-allowed">
+          Loading PDF Generator...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center">
+      <PDFDownloadLink
+        document={<ReceiptDocument receiptData={receiptData} />}
+        fileName={`receipt-${receiptData.receiptNumber}.pdf`}
+        className="inline-block px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
+      >
+        {({ blob, url, loading, error }) =>
+          loading ? 'Generating PDF...' : 'Download Receipt PDF'
+        }
+      </PDFDownloadLink>
+    </div>
+  );
+};
+
 // Main Component
 const PDFReceiptGenerator: React.FC = () => {
   const [receiptData, setReceiptData] = useState<ReceiptData>(sampleReceipt);
@@ -603,17 +648,7 @@ const PDFReceiptGenerator: React.FC = () => {
             </div>
           )}
           
-          <div className="text-center">
-            <PDFDownloadLink
-              document={<ReceiptDocument receiptData={receiptData} />}
-              fileName={`receipt-${receiptData.receiptNumber}.pdf`}
-              className="inline-block px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
-            >
-              {({ blob, url, loading, error }) =>
-                loading ? 'Generating PDF...' : 'Download Receipt PDF'
-              }
-            </PDFDownloadLink>
-          </div>
+          <PDFDownloadButton receiptData={receiptData} />
           
           <div className="mt-6">
             <h3 className="font-medium mb-2">TypeScript Features:</h3>
@@ -637,6 +672,7 @@ const PDFReceiptGenerator: React.FC = () => {
               <li>• Type-safe form handling</li>
               <li>• Input validation</li>
               <li>• Responsive design</li>
+              <li>• <strong>SSR Compatible:</strong> Fixed Next.js build issues</li>
             </ul>
           </div>
         </div>
@@ -653,25 +689,12 @@ const PDFReceiptGenerator: React.FC = () => {
         </div>
         
         <div className="mt-4">
-          <h4 className="font-medium mb-2">Required tsconfig.json settings:</h4>
-          <div className="text-sm font-mono bg-gray-800 text-green-400 p-3 rounded">
-            <pre>{`{
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "es2015"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
-  }
-}`}</pre>
+          <h4 className="font-medium mb-2">Fixed Next.js SSR Issues:</h4>
+          <div className="text-sm space-y-1 text-gray-600">
+            <div>• Used dynamic imports for PDFDownloadLink</div>
+            <div>• Added client-side check with useEffect</div>
+            <div>• Disabled SSR for PDF components</div>
+            <div>• Added loading states for better UX</div>
           </div>
         </div>
       </div>
