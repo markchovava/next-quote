@@ -172,7 +172,7 @@ const ReceiptDocument: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
         <Text style={styles.companyInfo}>{receiptData.company.city}</Text>
         <Text style={styles.companyInfo}>{receiptData.company.phone}</Text>
         <Text style={styles.companyInfo}>{receiptData.company.email}</Text>
-        <Text style={styles.receiptTitle}>RECEIPT</Text>
+        <Text style={styles.receiptTitle}>QUOTATION</Text>
       </View>
 
       {/* Receipt Info */}
@@ -224,7 +224,7 @@ const ReceiptDocument: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
       {/* Payment Info */}
       <View style={styles.section}>
         <View style={styles.row}>
-          <Text style={styles.col1}>Payment Method: {receiptData.paymentMethod}</Text>
+         {/*  <Text style={styles.col1}>Payment Method: {receiptData.paymentMethod}</Text> */}
           <Text style={styles.col2}>{receiptData.cardLast4}</Text>
         </View>
       </View>
@@ -460,11 +460,11 @@ const PDFReceiptGenerator: React.FC = () => {
         {/* Form Section */}
         <div className="space-y-6 overflow-y-auto max-h-[90vh]">
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Receipt Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Quotation Details</h2>
             
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium mb-1">Receipt Number:</label>
+                <label className="block text-sm font-medium mb-1">Quotation Number:</label>
                 <input
                   type="text"
                   value={receiptData.receiptNumber}
@@ -483,7 +483,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 />
               </div>
               
-              <div>
+             {/*  <div>
                 <label className="block text-sm font-medium mb-1">Payment Method:</label>
                 <input
                   type="text"
@@ -491,7 +491,7 @@ const PDFReceiptGenerator: React.FC = () => {
                   onChange={(e) => handleInputChange(e, (value) => updateReceiptData('paymentMethod', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
-              </div>
+              </div> */}
               
               <div>
                 <label className="block text-sm font-medium mb-1">Card Last 4:</label>
