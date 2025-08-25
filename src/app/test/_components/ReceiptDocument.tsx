@@ -13,20 +13,20 @@ interface CompanyInfo {
   email: string;
 }
 
-interface ReceiptItem {
+interface QuotationItem {
   name: string;
   quantity: number;
   price: number;
   total: number;
 }
 
-interface ReceiptData {
-  receiptNumber: string;
+interface QuotationData {
+  quotationNumber: string;
   date: string;
   time: string;
   cashier: string;
   company: CompanyInfo;
-  items: ReceiptItem[];
+  items: QuotationItem[];
   subtotal: number;
   tax: number;
   total: number;
@@ -34,8 +34,8 @@ interface ReceiptData {
   cardLast4: string;
 }
 
-interface ReceiptDocumentProps {
-  receiptData: ReceiptData;
+interface QuotationDocumentProps {
+  quotationData: QuotationData;
 }
 
 // Define styles for the PDF
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     color: '#666',
   },
-  receiptTitle: {
+  quotationTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 15,
@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
   }
 });
 
-// Sample receipt data
-const sampleReceipt: ReceiptData = {
-  receiptNumber: 'RCP-2024-001',
+// Sample quotation data
+const sampleQuotation: QuotationData = {
+  quotationNumber: 'RCP-2024-001',
   date: new Date().toLocaleDateString(),
   time: new Date().toLocaleTimeString(),
   cashier: 'John Doe',
@@ -162,28 +162,28 @@ const sampleReceipt: ReceiptData = {
 };
 
 // PDF Document Component
-const ReceiptDocument: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
+const QuotationDocument: React.FC<QuotationDocumentProps> = ({ quotationData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.companyName}>{receiptData.company.name}</Text>
-        <Text style={styles.companyInfo}>{receiptData.company.address}</Text>
-        <Text style={styles.companyInfo}>{receiptData.company.city}</Text>
-        <Text style={styles.companyInfo}>{receiptData.company.phone}</Text>
-        <Text style={styles.companyInfo}>{receiptData.company.email}</Text>
-        <Text style={styles.receiptTitle}>QUOTATION</Text>
+        <Text style={styles.companyName}>{quotationData.company.name}</Text>
+        <Text style={styles.companyInfo}>{quotationData.company.address}</Text>
+        <Text style={styles.companyInfo}>{quotationData.company.city}</Text>
+        <Text style={styles.companyInfo}>{quotationData.company.phone}</Text>
+        <Text style={styles.companyInfo}>{quotationData.company.email}</Text>
+        <Text style={styles.quotationTitle}>QUOTATION</Text>
       </View>
 
-      {/* Receipt Info */}
+      {/* Quotation Info */}
       <View style={styles.section}>
         <View style={styles.row}>
-          <Text style={styles.col1}>Receipt #: {receiptData.receiptNumber}</Text>
-          <Text style={styles.col2}>Date: {receiptData.date}</Text>
+          <Text style={styles.col1}>Quotation #: {quotationData.quotationNumber}</Text>
+          <Text style={styles.col2}>Date: {quotationData.date}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.col1}>Cashier: {receiptData.cashier}</Text>
-          <Text style={styles.col2}>Time: {receiptData.time}</Text>
+          <Text style={styles.col1}>Cashier: {quotationData.cashier}</Text>
+          <Text style={styles.col2}>Time: {quotationData.time}</Text>
         </View>
       </View>
 
@@ -196,7 +196,7 @@ const ReceiptDocument: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
       </View>
 
       {/* Items */}
-      {receiptData.items.map((item: ReceiptItem, index: number) => (
+      {quotationData.items.map((item: QuotationItem, index: number) => (
         <View key={index} style={styles.itemRow}>
           <Text style={styles.itemName}>{item.name}</Text>
           <Text style={styles.itemQty}>{item.quantity}</Text>
@@ -209,57 +209,57 @@ const ReceiptDocument: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
       <View style={styles.totalSection}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Subtotal:</Text>
-          <Text style={styles.totalAmount}>${receiptData.subtotal.toFixed(2)}</Text>
+          <Text style={styles.totalAmount}>${quotationData.subtotal.toFixed(2)}</Text>
         </View>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Tax:</Text>
-          <Text style={styles.totalAmount}>${receiptData.tax.toFixed(2)}</Text>
+          <Text style={styles.totalAmount}>${quotationData.tax.toFixed(2)}</Text>
         </View>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>TOTAL:</Text>
-          <Text style={styles.totalAmount}>${receiptData.total.toFixed(2)}</Text>
+          <Text style={styles.totalAmount}>${quotationData.total.toFixed(2)}</Text>
         </View>
       </View>
 
       {/* Payment Info */}
       <View style={styles.section}>
         <View style={styles.row}>
-         {/*  <Text style={styles.col1}>Payment Method: {receiptData.paymentMethod}</Text> */}
-          <Text style={styles.col2}>{receiptData.cardLast4}</Text>
+         {/*  <Text style={styles.col1}>Payment Method: {quotationData.paymentMethod}</Text> */}
+          <Text style={styles.col2}>{quotationData.cardLast4}</Text>
         </View>
       </View>
 
       {/* Footer */}
       <View style={styles.footer}>
         <Text>Thank you for your business!</Text>
-        <Text>Please keep this receipt for your records</Text>
+        <Text>Please keep this quotation for your records</Text>
       </View>
     </Page>
   </Document>
 );
 
-// Receipt Preview Component
-const ReceiptPreview: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
+// Quotation Preview Component
+const QuotationPreview: React.FC<QuotationDocumentProps> = ({ quotationData }) => (
   <div className="bg-white border border-gray-300 shadow-lg max-w-md mx-auto p-6 font-mono text-sm">
     {/* Header */}
     <div className="text-center mb-4">
-      <h2 className="text-lg font-bold mb-1">{receiptData.company.name}</h2>
-      <p className="text-xs text-gray-600 mb-0.5">{receiptData.company.address}</p>
-      <p className="text-xs text-gray-600 mb-0.5">{receiptData.company.city}</p>
-      <p className="text-xs text-gray-600 mb-0.5">{receiptData.company.phone}</p>
-      <p className="text-xs text-gray-600 mb-2">{receiptData.company.email}</p>
+      <h2 className="text-lg font-bold mb-1">{quotationData.company.name}</h2>
+      <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.address}</p>
+      <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.city}</p>
+      <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.phone}</p>
+      <p className="text-xs text-gray-600 mb-2">{quotationData.company.email}</p>
       <h3 className="text-base font-bold mt-3">RECEIPT</h3>
     </div>
 
-    {/* Receipt Info */}
+    {/* Quotation Info */}
     <div className="mb-4 text-xs">
       <div className="flex justify-between mb-1">
-        <span>Receipt #: {receiptData.receiptNumber}</span>
-        <span>Date: {receiptData.date}</span>
+        <span>Quotation #: {quotationData.quotationNumber}</span>
+        <span>Date: {quotationData.date}</span>
       </div>
       <div className="flex justify-between">
-        <span>Cashier: {receiptData.cashier}</span>
-        <span>Time: {receiptData.time}</span>
+        <span>Cashier: {quotationData.cashier}</span>
+        <span>Time: {quotationData.time}</span>
       </div>
     </div>
 
@@ -273,7 +273,7 @@ const ReceiptPreview: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
 
     {/* Items */}
     <div className="mb-4">
-      {receiptData.items.map((item: ReceiptItem, index: number) => (
+      {quotationData.items.map((item: QuotationItem, index: number) => (
         <div key={index} className="flex text-xs mb-1">
           <div className="w-2/5 truncate">{item.name}</div>
           <div className="w-1/6 text-center">{item.quantity}</div>
@@ -287,30 +287,30 @@ const ReceiptPreview: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
     <div className="border-t border-black pt-2 text-xs">
       <div className="flex justify-between mb-1">
         <span className="font-bold text-right flex-1 mr-2">Subtotal:</span>
-        <span className="font-bold w-1/4 text-right">${receiptData.subtotal.toFixed(2)}</span>
+        <span className="font-bold w-1/4 text-right">${quotationData.subtotal.toFixed(2)}</span>
       </div>
       <div className="flex justify-between mb-1">
         <span className="font-bold text-right flex-1 mr-2">Tax:</span>
-        <span className="font-bold w-1/4 text-right">${receiptData.tax.toFixed(2)}</span>
+        <span className="font-bold w-1/4 text-right">${quotationData.tax.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-sm font-bold">
         <span className="text-right flex-1 mr-2">TOTAL:</span>
-        <span className="w-1/4 text-right">${receiptData.total.toFixed(2)}</span>
+        <span className="w-1/4 text-right">${quotationData.total.toFixed(2)}</span>
       </div>
     </div>
 
     {/* Payment Info */}
     <div className="mt-4 text-xs">
       <div className="flex justify-between">
-        {/* <span>Payment Method: {receiptData.paymentMethod}</span> */}
-        <span>{receiptData.cardLast4}</span>
+        {/* <span>Payment Method: {quotationData.paymentMethod}</span> */}
+        <span>{quotationData.cardLast4}</span>
       </div>
     </div>
 
     {/* Footer */}
     <div className="text-center mt-6 text-xs text-gray-600">
       <p className="mb-1">Thank you for your business!</p>
-      <p>Please keep this receipt for your records</p>
+      <p>Please keep this quotation for your records</p>
     </div>
   </div>
 );
@@ -325,7 +325,7 @@ const PDFDownloadLink = dynamic(
 );
 
 // Client-side PDF Download Component
-const PDFDownloadButton: React.FC<{ receiptData: ReceiptData }> = ({ receiptData }) => {
+const PDFDownloadButton: React.FC<{ quotationData: QuotationData }> = ({ quotationData }) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -345,8 +345,8 @@ const PDFDownloadButton: React.FC<{ receiptData: ReceiptData }> = ({ receiptData
   return (
     <div className="text-center">
       <PDFDownloadLink
-        document={<ReceiptDocument receiptData={receiptData} />}
-        fileName={`receipt-${receiptData.receiptNumber}.pdf`}
+        document={<QuotationDocument quotationData={quotationData} />}
+        fileName={`quotation-${quotationData.quotationNumber}.pdf`}
         className="inline-block px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
       >
         {({ blob, url, loading, error }) =>
@@ -358,40 +358,40 @@ const PDFDownloadButton: React.FC<{ receiptData: ReceiptData }> = ({ receiptData
 };
 
 // Main Component
-const PDFReceiptGenerator: React.FC = () => {
-  const [receiptData, setReceiptData] = useState<ReceiptData>(sampleReceipt);
+const PDFQuotationGenerator: React.FC = () => {
+  const [quotationData, setQuotationData] = useState<QuotationData>(sampleQuotation);
   const [showPreview, setShowPreview] = useState<boolean>(true);
 
-  const updateReceiptData = (field: keyof ReceiptData, value: any): void => {
-    setReceiptData(prev => ({
+  const updateQuotationData = (field: keyof QuotationData, value: any): void => {
+    setQuotationData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
   const updateCompanyData = (field: keyof CompanyInfo, value: string): void => {
-    setReceiptData(prev => ({
+    setQuotationData(prev => ({
       ...prev,
       company: { ...prev.company, [field]: value }
     }));
   };
 
   const addItem = (): void => {
-    const newItem: ReceiptItem = {
+    const newItem: QuotationItem = {
       name: 'New Item',
       quantity: 1,
       price: 0.00,
       total: 0.00
     };
-    setReceiptData(prev => ({
+    setQuotationData(prev => ({
       ...prev,
       items: [...prev.items, newItem]
     }));
   };
 
-  const updateItem = (index: number, field: keyof ReceiptItem, value: string | number): void => {
-    setReceiptData(prev => {
-      const newItems: ReceiptItem[] = [...prev.items];
+  const updateItem = (index: number, field: keyof QuotationItem, value: string | number): void => {
+    setQuotationData(prev => {
+      const newItems: QuotationItem[] = [...prev.items];
       
       if (field === 'name') {
         newItems[index] = { ...newItems[index], [field]: value as string };
@@ -404,8 +404,8 @@ const PDFReceiptGenerator: React.FC = () => {
         newItems[index].total = newItems[index].quantity * newItems[index].price;
       }
       
-      // Recalculate receipt totals
-      const subtotal: number = newItems.reduce((sum: number, item: ReceiptItem) => sum + item.total, 0);
+      // Recalculate quotation totals
+      const subtotal: number = newItems.reduce((sum: number, item: QuotationItem) => sum + item.total, 0);
       const tax: number = subtotal * 0.08; // 8% tax
       const total: number = subtotal + tax;
       
@@ -420,11 +420,11 @@ const PDFReceiptGenerator: React.FC = () => {
   };
 
   const removeItem = (index: number): void => {
-    setReceiptData(prev => {
-      const newItems: ReceiptItem[] = prev.items.filter((_, i) => i !== index);
+    setQuotationData(prev => {
+      const newItems: QuotationItem[] = prev.items.filter((_, i) => i !== index);
       
-      // Recalculate receipt totals
-      const subtotal: number = newItems.reduce((sum: number, item: ReceiptItem) => sum + item.total, 0);
+      // Recalculate quotation totals
+      const subtotal: number = newItems.reduce((sum: number, item: QuotationItem) => sum + item.total, 0);
       const tax: number = subtotal * 0.08; // 8% tax
       const total: number = subtotal + tax;
       
@@ -467,8 +467,8 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Quotation Number:</label>
                 <input
                   type="text"
-                  value={receiptData.receiptNumber}
-                  onChange={(e) => handleInputChange(e, (value) => updateReceiptData('receiptNumber', value))}
+                  value={quotationData.quotationNumber}
+                  onChange={(e) => handleInputChange(e, (value) => updateQuotationData('quotationNumber', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
@@ -477,8 +477,8 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Cashier:</label>
                 <input
                   type="text"
-                  value={receiptData.cashier}
-                  onChange={(e) => handleInputChange(e, (value) => updateReceiptData('cashier', value))}
+                  value={quotationData.cashier}
+                  onChange={(e) => handleInputChange(e, (value) => updateQuotationData('cashier', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
@@ -487,8 +487,8 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Payment Method:</label>
                 <input
                   type="text"
-                  value={receiptData.paymentMethod}
-                  onChange={(e) => handleInputChange(e, (value) => updateReceiptData('paymentMethod', value))}
+                  value={quotationData.paymentMethod}
+                  onChange={(e) => handleInputChange(e, (value) => updateQuotationData('paymentMethod', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div> */}
@@ -497,8 +497,8 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Card Last 4:</label>
                 <input
                   type="text"
-                  value={receiptData.cardLast4}
-                  onChange={(e) => handleInputChange(e, (value) => updateReceiptData('cardLast4', value))}
+                  value={quotationData.cardLast4}
+                  onChange={(e) => handleInputChange(e, (value) => updateQuotationData('cardLast4', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
@@ -514,7 +514,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Store Name:</label>
                 <input
                   type="text"
-                  value={receiptData.company.name}
+                  value={quotationData.company.name}
                   onChange={(e) => handleInputChange(e, (value) => updateCompanyData('name', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -524,7 +524,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Address:</label>
                 <input
                   type="text"
-                  value={receiptData.company.address}
+                  value={quotationData.company.address}
                   onChange={(e) => handleInputChange(e, (value) => updateCompanyData('address', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -534,7 +534,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">City, State ZIP:</label>
                 <input
                   type="text"
-                  value={receiptData.company.city}
+                  value={quotationData.company.city}
                   onChange={(e) => handleInputChange(e, (value) => updateCompanyData('city', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -544,7 +544,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Phone:</label>
                 <input
                   type="text"
-                  value={receiptData.company.phone}
+                  value={quotationData.company.phone}
                   onChange={(e) => handleInputChange(e, (value) => updateCompanyData('phone', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -554,7 +554,7 @@ const PDFReceiptGenerator: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Email:</label>
                 <input
                   type="email"
-                  value={receiptData.company.email}
+                  value={quotationData.company.email}
                   onChange={(e) => handleInputChange(e, (value) => updateCompanyData('email', value))}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -576,7 +576,7 @@ const PDFReceiptGenerator: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              {receiptData.items.map((item: ReceiptItem, index: number) => (
+              {quotationData.items.map((item: QuotationItem, index: number) => (
                 <div key={index} className="grid grid-cols-5 gap-2">
                   <input
                     type="text"
@@ -618,9 +618,9 @@ const PDFReceiptGenerator: React.FC = () => {
             
             <div className="mt-4 pt-4 border-t border-gray-300">
               <div className="text-right space-y-1">
-                <div>Subtotal: ${receiptData.subtotal.toFixed(2)}</div>
-                <div>Tax (8%): ${receiptData.tax.toFixed(2)}</div>
-                <div className="text-lg font-bold">Total: ${receiptData.total.toFixed(2)}</div>
+                <div>Subtotal: ${quotationData.subtotal.toFixed(2)}</div>
+                <div>Tax (8%): ${quotationData.tax.toFixed(2)}</div>
+                <div className="text-lg font-bold">Total: ${quotationData.total.toFixed(2)}</div>
               </div>
             </div>
           </div>
@@ -629,7 +629,7 @@ const PDFReceiptGenerator: React.FC = () => {
         {/* PDF Preview/Download Section */}
         <div className="bg-gray-50 p-4 rounded-lg overflow-y-auto max-h-[90vh]">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Receipt Preview & Download</h2>
+            <h2 className="text-xl font-semibold">Quotation Preview & Download</h2>
             <button
               onClick={() => setShowPreview(!showPreview)}
               className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm"
@@ -643,18 +643,18 @@ const PDFReceiptGenerator: React.FC = () => {
             <div className="mb-6">
               <h3 className="text-sm font-medium mb-3 text-gray-700">Live Preview:</h3>
               <div className="max-h-96 overflow-y-auto border rounded-lg bg-gray-100 p-4">
-                <ReceiptPreview receiptData={receiptData} />
+                <QuotationPreview quotationData={quotationData} />
               </div>
             </div>
           )}
           
-          <PDFDownloadButton receiptData={receiptData} />
+          <PDFDownloadButton quotationData={quotationData} />
           
           <div className="mt-6">
             <h3 className="font-medium mb-2">TypeScript Features:</h3>
             <ul className="text-sm space-y-1 text-gray-600">
               <li>• <strong>Type Safety:</strong> Fully typed interfaces and functions</li>
-              <li>• <strong>Interface Definitions:</strong> ReceiptData, ReceiptItem, CompanyInfo</li>
+              <li>• <strong>Interface Definitions:</strong> QuotationData, QuotationItem, CompanyInfo</li>
               <li>• <strong>Type Guards:</strong> Proper type checking for inputs</li>
               <li>• <strong>Generic Types:</strong> Strongly typed event handlers</li>
               <li>• <strong>Null Safety:</strong> Proper handling of undefined values</li>
@@ -665,7 +665,7 @@ const PDFReceiptGenerator: React.FC = () => {
           <div className="mt-4">
             <h3 className="font-medium mb-2">Enhanced Features:</h3>
             <ul className="text-sm space-y-1 text-gray-600">
-              <li>• Professional receipt layout</li>
+              <li>• Professional quotation layout</li>
               <li>• Complete company information editor</li>
               <li>• Dynamic item management (add/remove)</li>
               <li>• Automatic calculations with tax</li>
@@ -702,4 +702,4 @@ const PDFReceiptGenerator: React.FC = () => {
   );
 };
 
-export default PDFReceiptGenerator;
+export default PDFQuotationGenerator;
