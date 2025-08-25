@@ -302,7 +302,7 @@ const ReceiptPreview: React.FC<ReceiptDocumentProps> = ({ receiptData }) => (
     {/* Payment Info */}
     <div className="mt-4 text-xs">
       <div className="flex justify-between">
-        <span>Payment Method: {receiptData.paymentMethod}</span>
+        {/* <span>Payment Method: {receiptData.paymentMethod}</span> */}
         <span>{receiptData.cardLast4}</span>
       </div>
     </div>
@@ -350,7 +350,7 @@ const PDFDownloadButton: React.FC<{ receiptData: ReceiptData }> = ({ receiptData
         className="inline-block px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
       >
         {({ blob, url, loading, error }) =>
-          loading ? 'Generating PDF...' : 'Download Receipt PDF'
+          loading ? 'Generating PDF...' : 'Download Quotation PDF'
         }
       </PDFDownloadLink>
     </div>
