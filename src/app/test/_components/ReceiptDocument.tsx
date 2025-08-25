@@ -248,7 +248,7 @@ const QuotationPreview: React.FC<QuotationDocumentProps> = ({ quotationData }) =
       <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.city}</p>
       <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.phone}</p>
       <p className="text-xs text-gray-600 mb-2">{quotationData.company.email}</p>
-      <h3 className="text-base font-bold mt-3">RECEIPT</h3>
+      <h3 className="text-base font-bold mt-3">QUOTATION</h3>
     </div>
 
     {/* Quotation Info */}
