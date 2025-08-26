@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
-import dynamic from 'next/dynamic';
+import { pdf } from '@react-pdf/renderer';
 
 // Type definitions
 interface CompanyInfo {
@@ -135,30 +135,33 @@ const styles = StyleSheet.create({
   }
 });
 
-// Sample quotation data
-const sampleQuotation: QuotationData = {
-  quotationNumber: 'RCP-2024-001',
-  date: new Date().toLocaleDateString(),
-  time: new Date().toLocaleTimeString(),
-  cashier: 'John Doe',
-  company: {
-    name: 'Your Store Name',
-    address: '123 Main Street',
-    city: 'City, State 12345',
-    phone: '(555) 123-4567',
-    email: 'info@yourstore.com'
-  },
-  items: [
-    { name: 'Coffee - Large', quantity: 2, price: 4.99, total: 9.98 },
-    { name: 'Sandwich - BLT', quantity: 1, price: 7.50, total: 7.50 },
-    { name: 'Chips', quantity: 1, price: 2.25, total: 2.25 },
-    { name: 'Soda - Medium', quantity: 1, price: 2.99, total: 2.99 }
-  ],
-  subtotal: 22.72,
-  tax: 1.82,
-  total: 24.54,
-  paymentMethod: 'Credit Card',
-  cardLast4: '****1234'
+// Function to generate default quotation data
+const generateDefaultQuotationData = (): QuotationData => {
+  const now = new Date();
+  return {
+    quotationNumber: 'RCP-2024-001',
+    date: now.toLocaleDateString(),
+    time: now.toLocaleTimeString(),
+    cashier: 'John Doe',
+    company: {
+      name: 'Your Store Name',
+      address: '123 Main Street',
+      city: 'City, State 12345',
+      phone: '(555) 123-4567',
+      email: 'info@yourstore.com'
+    },
+    items: [
+      { name: 'Coffee - Large', quantity: 2, price: 4.99, total: 9.98 },
+      { name: 'Sandwich - BLT', quantity: 1, price: 7.50, total: 7.50 },
+      { name: 'Chips', quantity: 1, price: 2.25, total: 2.25 },
+      { name: 'Soda - Medium', quantity: 1, price: 2.99, total: 2.99 }
+    ],
+    subtotal: 22.72,
+    tax: 1.82,
+    total: 24.54,
+    paymentMethod: 'Credit Card',
+    cardLast4: '****1234'
+  };
 };
 
 // PDF Document Component
@@ -183,7 +186,7 @@ const QuotationDocument: React.FC<QuotationDocumentProps> = ({ quotationData }) 
         </View>
         <View style={styles.row}>
           <Text style={styles.col1}>Cashier: {quotationData.cashier}</Text>
-          <Text style={styles.col2}>Time: {quotationData.time}</Text>
+          <Text style={styles.col2}>Time: {quotationData?.time}</Text>
         </View>
       </View>
 
@@ -248,18 +251,18 @@ const QuotationPreview: React.FC<QuotationDocumentProps> = ({ quotationData }) =
       <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.city}</p>
       <p className="text-xs text-gray-600 mb-0.5">{quotationData.company.phone}</p>
       <p className="text-xs text-gray-600 mb-2">{quotationData.company.email}</p>
-      <h3 className="text-base font-bold mt-3">QUOTATION</h3>
+      <h3 className="text-base font-bold mt-3">RECEIPT</h3>
     </div>
 
     {/* Quotation Info */}
     <div className="mb-4 text-xs">
       <div className="flex justify-between mb-1">
         <span>Quotation #: {quotationData.quotationNumber}</span>
-        <span>Date: {quotationData.date}</span>
+        <span>Date: {quotationData?.date}</span>
       </div>
       <div className="flex justify-between">
-        <span>Cashier: {quotationData.cashier}</span>
-        <span>Time: {quotationData.time}</span>
+        <span>Cashier: {quotationData?.cashier}</span>
+        <span>Time: {quotationData?.time}</span>
       </div>
     </div>
 
@@ -316,81 +319,105 @@ const QuotationPreview: React.FC<QuotationDocumentProps> = ({ quotationData }) =
 );
 
 // Dynamically import PDFDownloadLink to avoid SSR issues
-const PDFDownloadLink = dynamic(
+/* const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
     ssr: false,
     loading: () => <p>Loading PDF generator...</p>
   }
-);
+); */
 
 // Client-side PDF Download Component
 const PDFDownloadButton: React.FC<{ quotationData: QuotationData }> = ({ quotationData }) => {
-  const [isClient, setIsClient] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const handleDownload = async () => {
+    try {
+      setIsGenerating(true);
 
-  if (!isClient) {
-    return (
-      <div className="text-center">
-        <div className="inline-block px-6 py-3 bg-gray-400 text-white font-medium rounded-lg cursor-not-allowed">
-          Loading PDF Generator...
-        </div>
-      </div>
-    );
-  }
+      // Generate PDF blob only when clicked
+      const blob = await pdf(<QuotationDocument quotationData={quotationData} />).toBlob();
+
+      // Trigger download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `quotation-${quotationData.quotationNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="text-center">
-      <PDFDownloadLink
-        document={<QuotationDocument quotationData={quotationData} />}
-        fileName={`quotation-${quotationData.quotationNumber}.pdf`}
-        className="inline-block px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors"
+      <button
+        onClick={handleDownload}
+        disabled={isGenerating}
+        className={`inline-block px-6 py-3 rounded-lg text-white font-medium transition-colors ${
+          isGenerating
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-green-500 hover:bg-green-600'
+        }`}
       >
-        {({ blob, url, loading, error }) =>
-          loading ? 'Generating PDF...' : 'Download Quotation PDF'
-        }
-      </PDFDownloadLink>
+        {isGenerating ? 'Generating PDF...' : 'Download Quotation PDF'}
+      </button>
     </div>
   );
 };
 
+
+
+
 // Main Component
 const PDFQuotationGenerator: React.FC = () => {
-  const [quotationData, setQuotationData] = useState<QuotationData>(sampleQuotation);
+  const [quotationData, setQuotationData] = useState<QuotationData | null>(null);
   const [showPreview, setShowPreview] = useState<boolean>(true);
 
+  // Initialize quotation data on client side only
+  useEffect(() => {
+    setQuotationData(generateDefaultQuotationData());
+  }, []);
+
   const updateQuotationData = (field: keyof QuotationData, value: any): void => {
-    setQuotationData(prev => ({
+    if (!quotationData) return;
+    setQuotationData(prev => prev ? ({
       ...prev,
       [field]: value
-    }));
+    }) : null);
   };
 
   const updateCompanyData = (field: keyof CompanyInfo, value: string): void => {
-    setQuotationData(prev => ({
+    if (!quotationData) return;
+    setQuotationData(prev => prev ? ({
       ...prev,
       company: { ...prev.company, [field]: value }
-    }));
+    }) : null);
   };
 
   const addItem = (): void => {
+    if (!quotationData) return;
     const newItem: QuotationItem = {
       name: 'New Item',
       quantity: 1,
       price: 0.00,
       total: 0.00
     };
-    setQuotationData(prev => ({
+    setQuotationData(prev => prev ? ({
       ...prev,
       items: [...prev.items, newItem]
-    }));
+    }) : null);
   };
 
   const updateItem = (index: number, field: keyof QuotationItem, value: string | number): void => {
+    if (!quotationData) return;
     setQuotationData(prev => {
+      if (!prev) return null;
       const newItems: QuotationItem[] = [...prev.items];
       
       if (field === 'name') {
@@ -420,7 +447,9 @@ const PDFQuotationGenerator: React.FC = () => {
   };
 
   const removeItem = (index: number): void => {
+    if (!quotationData) return;
     setQuotationData(prev => {
+      if (!prev) return null;
       const newItems: QuotationItem[] = prev.items.filter((_, i) => i !== index);
       
       // Recalculate quotation totals
@@ -452,6 +481,17 @@ const PDFQuotationGenerator: React.FC = () => {
     const value = parseFloat(event.target.value) || 0;
     callback(value);
   };
+
+  // Show loading state until quotation data is initialized
+  if (!quotationData) {
+    return (
+      <div className="max-w-6xl mx-auto p-6 bg-white">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading quotation generator...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white">
@@ -673,6 +713,7 @@ const PDFQuotationGenerator: React.FC = () => {
               <li>• Input validation</li>
               <li>• Responsive design</li>
               <li>• <strong>SSR Compatible:</strong> Fixed Next.js build issues</li>
+              <li>• <strong>Hydration Safe:</strong> Fixed server/client mismatch</li>
             </ul>
           </div>
         </div>
@@ -689,12 +730,12 @@ const PDFQuotationGenerator: React.FC = () => {
         </div>
         
         <div className="mt-4">
-          <h4 className="font-medium mb-2">Fixed Next.js SSR Issues:</h4>
+          <h4 className="font-medium mb-2">Fixed Hydration Issues:</h4>
           <div className="text-sm space-y-1 text-gray-600">
-            <div>• Used dynamic imports for PDFDownloadLink</div>
-            <div>• Added client-side check with useEffect</div>
-            <div>• Disabled SSR for PDF components</div>
-            <div>• Added loading states for better UX</div>
+            <div>• Moved date/time generation to client-side useEffect</div>
+            <div>• Added null state check for quotationData</div>
+            <div>• Used loading state until data is initialized</div>
+            <div>• Prevented server/client date/time mismatch</div>
           </div>
         </div>
       </div>
