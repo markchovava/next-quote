@@ -3,16 +3,11 @@ import TextInput from '@/app/_components/form-inputs/TextInput';
 import React, { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import useQuoteStore from '@/app/_store/QuoteStore';
-import ButtonPrimary from '@/app/_components/buttons/ButtonPrimary';
-import ButtonSecondary from '@/app/_components/buttons/ButtonSecondary';
-import ButtonTertiary from '@/app/_components/buttons/ButtonTertiary';
-import ModalComp from '@/app/admin/_components/ModalComp';
-import PDFDownloadButton from '../../_components/PDFDownloadButton';
 
 
 
 
-export default function QuoteAdd() {
+export default function QuoteAdd1() {
   const {
     formData,
     errors,
@@ -23,8 +18,6 @@ export default function QuoteAdd() {
     calculateTotals,
     clearError
   } = useQuoteStore();
-
-  const [isModal, setIsModal] = useState(false);
 
   console.log("formData", formData)
 
@@ -78,9 +71,8 @@ export default function QuoteAdd() {
   return (
     <>
       <section className='w-full pt-[5rem] pb-[6rem]'>
-        <div className='w-[92%] mx-auto flex items-center justify-end gap-3 mb-8'>
-          <ButtonTertiary title='Preview Quotation' css='py-2 px-4' onClick={() => setIsModal(true)} />
-          <PDFDownloadButton />
+        <div className='w-[92%] mx-auto flex items-center justify-between mb-8'>
+
         </div>
         <div className='w-[92%] mx-auto grid lg:grid-cols-2 grid-cols-1 gap-8'>
           {/* Company Information */}
@@ -184,14 +176,15 @@ export default function QuoteAdd() {
           </div>
 
           {/* Items Header - Only show when there are items */}
-          <div className='w-full grid grid-cols-6 gap-4 mb-4 font-semibold'>
-              <div className='col-span-2'>Item Name</div>
-              <div className='col-span-1'>Quantity</div>
-              <div className='col-span-1'>Price</div>
-              <div className='col-span-1'>Total</div>
-              <div className='col-span-1'>Action</div>
-          </div>
+        <div className='w-full grid grid-cols-6 gap-4 mb-4 font-semibold'>
+            <div className='col-span-2'>Item Name</div>
+            <div className='col-span-1'>Quantity</div>
+            <div className='col-span-1'>Price</div>
+            <div className='col-span-1'>Total</div>
+            <div className='col-span-1'>Action</div>
+        </div>
         
+
           {/* New Item Input Row - Always Present */}
           <div className='w-full grid grid-cols-6 gap-4 mb-4 border-b-2 border-dashed border-gray-300 pb-4'>
             <div className='col-span-2'>
@@ -310,14 +303,8 @@ export default function QuoteAdd() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
-
-      {/* Modal Component preview Receipt */}
-      <ModalComp 
-        isModal={isModal} 
-        setIsModal={setIsModal} />
     </>
   );
 }
