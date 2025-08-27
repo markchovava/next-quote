@@ -126,6 +126,14 @@ export default function QuoteAdd() {
                 error={errors.companyWebsite}
                 type="url"
               />
+              <TextInput 
+                label="Company Email"
+                placeholder="Enter Company Email Address"
+                value={formData.companyEmail}
+                onChange={(value) => setField('companyEmail', value)}
+                error={errors.companyEmail}
+                type="email"
+              />
             </div>
           </div>
 
@@ -169,6 +177,14 @@ export default function QuoteAdd() {
                 value={formData.estimateDate}
                 onChange={(value) => setField('estimateDate', value)}
                 error={errors.estimateDate}
+                type="date"
+              />
+              <TextInput 
+                label="Valid Until"
+                placeholder="Select date"
+                value={formData.validUntil}
+                onChange={(value) => setField('validUntil', value)}
+                error={errors.validUntil}
                 type="date"
               />
             </div>

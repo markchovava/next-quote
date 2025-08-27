@@ -18,10 +18,12 @@ interface FormInput {
   customerName: string;
   customerAddress: string;
   customerPhone: string;
+  companyEmail: string;
   tax: number;
   grandTotal: number;
   estimateNumber: string;
   estimateDate: string;
+  validUntil: string;
   subtotal: number;
   items: Item[];
 }
@@ -58,7 +60,9 @@ const defaultFormData: FormInput = {
   customerName: "",
   customerAddress: "",
   customerPhone: "",
+  companyEmail: "",
   tax: 0,
+  validUntil: "",
   grandTotal: 0,
   estimateNumber: "",
   estimateDate: "",
